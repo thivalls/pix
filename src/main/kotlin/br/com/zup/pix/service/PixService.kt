@@ -1,10 +1,13 @@
 package br.com.zup.pix.service
 
+import br.com.zup.pix.GrpcKeyManagerResponse
 import br.com.zup.pix.PixRepository
 import br.com.zup.pix.client.ItauClient
 import br.com.zup.pix.client.ItauExternalApiResponse
 import br.com.zup.pix.model.Pix
 import br.com.zup.pix.request.PixRequest
+import io.grpc.Status
+import io.grpc.stub.StreamObserver
 import io.micronaut.validation.Validated
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -22,8 +25,8 @@ class PixService(
     val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
-    fun store(@Valid pixRequest: PixRequest) : Pix {
-
+    fun store(@Valid pixRequest: PixRequest, response: StreamObserver<GrpcKeyManagerResponse>): Pix? {
+        logger.info("START SERVICE")
         logger.info("Buscando usuário por id na api do ITAU $pixRequest.clientId")
         try {
             val existClient: ItauExternalApiResponse = itauClient.findByClientId(pixRequest.clientId);
@@ -40,14 +43,23 @@ class PixService(
                 throw IllegalStateException("The key has been already created")
             }
 
+
+            logger.info("Inicianco criacao de entidade")
             val pixToBeSaved: Pix = pixRequest.toPix()
             println(pixToBeSaved.toString())
+            logger.info("Entidade pronta para salvar")
 
             return pixRepository.save(pixToBeSaved)
         } catch (e: Exception) {
-            throw java.lang.IllegalStateException("No pix founded")
+            response.onError(
+                Status.INVALID_ARGUMENT
+                    .withDescription("Cliente inexistente ou chave já cadastrada")
+                    .withCause(e)
+                    .asRuntimeException()
+            )
+            // throw java.lang.IllegalStateException("No pix founded -> ?????? " + e.message)
         }
 
-
+        return null
     }
 }

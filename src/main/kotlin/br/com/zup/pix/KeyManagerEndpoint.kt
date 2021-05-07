@@ -25,26 +25,21 @@ class KeyManagerEndpoint(
 
     override fun store(request: GrpcKeyManagerRequest, responseObserver: StreamObserver<GrpcKeyManagerResponse>) {
 
-
         try {
             logger.info("Convertendo para novo regitro dto")
+            // logger.info(request.toString())
             val pixRequest: PixRequest = request.toPixModel();
-            println(pixRequest.toString())
+            // println(pixRequest.toString())
             // chama service
-            val pix: Pix = pixService.store(pixRequest)
-
-
-
-            logger.info("Iniciando processo de gravação de nova chave no sistema interno")
-            logger.info("Gravando dados no banco")
-
-            logger.info("Iniciando retorno para blomRPC")
+            val pix: Pix? = pixService.store(pixRequest, responseObserver)
+            logger.info("Entidade registrada com sucesso -> ${pix!!.id}")
             // println(GrpcKeyManagerResponse.newBuilder())
             responseObserver.onNext(
                 GrpcKeyManagerResponse
                     .newBuilder()
                     .setPixId(pix.id.toString())
                     .setPixKey(pix.key)
+                    .setPixKeyType(pix.type)
                     .setCreatedAt(
                         LocalDateTime.now().let {
                             val instant = it.atZone(ZoneId.of("UTC")).toInstant()

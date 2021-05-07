@@ -28,7 +28,8 @@ message GrpcKeyManagerRequest {
 message GrpcKeyManagerResponse {
   string pixId = 1;
   string pixKey = 2;
-  google.protobuf.Timestamp createdAt = 3;
+  KeyType pixKeyType = 3;
+  google.protobuf.Timestamp createdAt = 4;
 }
 
 enum KeyType {

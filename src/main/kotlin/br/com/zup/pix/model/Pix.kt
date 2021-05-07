@@ -17,7 +17,7 @@ class Pix(
     val clientId: String,
 
     @field:NotNull
-    @Enumerated(EnumType.STRING)
+   // @Enumerated(EnumType.STRING)
     val type: KeyType?,
 
     @field:NotBlank
@@ -25,7 +25,7 @@ class Pix(
     val key: String,
 
     @field:NotNull
-    @Enumerated(EnumType.STRING)
+    // @Enumerated(EnumType.STRING)
     val typeAccount: AccountType?,
 
     @field:NotNull
