@@ -1,7 +1,9 @@
 package br.com.zup.pix.client
 
 data class ItauExternalApiResponse (
-    val id: String? = null,
-    val nome: String? = null,
-    val cpf: String? = null,
+    val tipo: String? = null,
+    val instituicao: InstituicaoResponse? = null,
+    val agencia: String? = null,
+    val numero: String? = null,
+    val titular: TitularResponse? = null,
 )

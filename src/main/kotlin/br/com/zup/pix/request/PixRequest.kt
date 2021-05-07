@@ -3,15 +3,17 @@ package br.com.zup.pix.request
 import br.com.zup.pix.AccountType
 import br.com.zup.pix.KeyType
 import br.com.zup.pix.model.Pix
+import br.com.zup.pix.validation.ValidUUID
 import io.micronaut.core.annotation.Introspected
 import java.time.LocalDateTime
+import java.util.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 @Introspected
-class PixRequest(
-        //@ValidUUID
+data class PixRequest(
+    @ValidUUID
     @field:NotBlank
     val clientId: String,
 
@@ -28,17 +30,10 @@ class PixRequest(
 
     fun toPix() : Pix {
         return Pix(
-            clientId = clientId,
+            clientId = UUID.fromString(clientId),
             type = type,
-            key = key,
+            key = if(type == KeyType.ALEATORIA) UUID.randomUUID().toString() else key!!,
             typeAccount = typeAccount,
-            createdAt = LocalDateTime.now(),
         )
     }
-
-    override fun toString(): String {
-        return "PixRequest(clientId='$clientId', type=$type, key='$key', typeAccount=$typeAccount)"
-    }
-
-
 }

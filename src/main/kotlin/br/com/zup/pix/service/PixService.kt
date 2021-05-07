@@ -1,7 +1,7 @@
 package br.com.zup.pix.service
 
 import br.com.zup.pix.GrpcKeyManagerResponse
-import br.com.zup.pix.PixRepository
+import br.com.zup.pix.repository.PixRepository
 import br.com.zup.pix.client.ItauClient
 import br.com.zup.pix.client.ItauExternalApiResponse
 import br.com.zup.pix.model.Pix
@@ -46,7 +46,7 @@ class PixService(
 
             logger.info("Inicianco criacao de entidade")
             val pixToBeSaved: Pix = pixRequest.toPix()
-            println(pixToBeSaved.toString())
+            println("********************* " + pixToBeSaved.toString())
             logger.info("Entidade pronta para salvar")
 
             return pixRepository.save(pixToBeSaved)
